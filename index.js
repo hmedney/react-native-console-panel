@@ -212,7 +212,9 @@ var ConsolePanel = React.createClass({
                 <View style={styles.touchOverlay} {...this._panResponder.panHandlers}/>
                 {this.state.isOpen?<View style={styles.bar}>
                     <TouchableWithoutFeedback onPress={this._clearAll}>
+                      <View>
                         <Text style={styles.bottomBarBtnText}>clear</Text>
+                      </View>
                     </TouchableWithoutFeedback>
                 </View>:null}
                 <View style={styles.btn}>
@@ -225,7 +227,9 @@ var ConsolePanel = React.createClass({
                         });
                     }
                     }>
+                      <View>
                         <Text style={styles.btnText}>{this.state.isOpen?'close':' open'}</Text>
+                      </View>
                     </TouchableWithoutFeedback>
                 </View>
             </View>
