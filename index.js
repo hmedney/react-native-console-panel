@@ -26,14 +26,14 @@
 
 'use strict';
 
-var React = require("react-native");
-var {
+import React from "react";
+import {
     View,
     Text,
     StyleSheet,
     PanResponder,
     TouchableWithoutFeedback
-    } = React;
+    } from 'react-native';
 
 const PANEL_BACKGROUND = 'rgba(51,72,94,0.6)';
 const PANEL_BACKGROUND_SELECTED = 'rgba(51,72,94,0.9)';
@@ -111,6 +111,7 @@ var ConsolePanel = React.createClass({
         };
     },
     getInitialState:function(){
+      console.log('YO', {global});
         return {
             dataSource:[],
             isOpen:this.props.open,
@@ -157,7 +158,7 @@ var ConsolePanel = React.createClass({
         this.panel.setNativeProps({style:{backgroundColor:PANEL_BACKGROUND}});
     },
     componentWillMount:function(){
-        if(!global.consolePanelStack){
+        if(global.consolePanelStack == null){
             _setup(global,false);
         }
 
@@ -171,10 +172,10 @@ var ConsolePanel = React.createClass({
         });
     },
     componentDidMount:function(){
-        consolePanelStack.bindUpdateListener(()=>{
+        global.consolePanelStack.bindUpdateListener(()=>{
             this.setState({
-                dataSource:consolePanelStack.getData(this.props.limit),
-                unreadCount:consolePanelStack.getUnreadCount()
+                dataSource:global.consolePanelStack.getData(this.props.limit),
+                unreadCount:global.consolePanelStack.getUnreadCount()
             });
         });
         this.panelStyle.left = this.panel.props.style[1]?this.panel.props.style[1].left:10;
@@ -361,7 +362,7 @@ var _setup = function(_global,_keepYellowBox) {
             });
         }
 
-        if (!global.consolePanelStack) {
+        if (global.consolePanelStack == null) {
             let consolePanelStack = new ConsoleStack(50);
             global.consolePanelStack = consolePanelStack;
             proxyStockConsole(global.console, consolePanelStack, keepYellowBox);
@@ -374,7 +375,7 @@ var _setup = function(_global,_keepYellowBox) {
 
 module.exports = {
     keepYellowbox:()=>{
-        _setup(this,true);
+        _setup(global,true);
         return {
             Panel:ConsolePanel,
             displayWhenDev:()=>__DEV__?<ConsolePanel/>:null,
@@ -383,11 +384,11 @@ module.exports = {
     },
     Panel:ConsolePanel,
     displayWhenDev:()=>{
-        _setup(this,false);
+        _setup(global,false);
         return __DEV__?<ConsolePanel/>:null;
     },
     displayIgnoreDevVariable:()=>{
-        _setup(this,false);
+        _setup(global,false);
         return <ConsolePanel/>
     },
 };
